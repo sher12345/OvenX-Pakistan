@@ -1,0 +1,673 @@
+
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>OvenX Pakistan | Fast Food Meets Flavour</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          "ink": "#1a1210",
+          "ink-soft": "#241713",
+          "ember": "#7a1013",
+          "ember-dark": "#530b0d",
+          "flame": "#f2811a",
+          "flame-light": "#ff9a3d",
+          "gold": "#ffb648",
+          "cream": "#fdf6ec",
+          "cream-dim": "#f6ede0",
+          "paper": "#fbf2e4",
+          "char": "#241712",
+          "char-soft": "#5c4d44",
+          "line": "#e7d9c6",
+        },
+        fontFamily: {
+          "display": ["Anton", "sans-serif"],
+          "body": ["Inter", "sans-serif"],
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24; vertical-align: middle; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; }
+  .font-display { font-family: 'Anton', sans-serif; letter-spacing: 0.01em; }
+  .page { display: none; min-height: 100vh; }
+  .page.active-page { display: block; }
+  .flame-edge-down { clip-path: polygon(0% 0%,100% 0%,100% 78%,94% 100%,88% 78%,82% 100%,76% 78%,70% 100%,64% 78%,58% 100%,52% 78%,46% 100%,40% 78%,34% 100%,28% 78%,22% 100%,16% 78%,10% 100%,4% 78%,0% 100%); }
+  .flame-edge-up { clip-path: polygon(0% 100%,100% 100%,100% 22%,94% 0%,88% 22%,82% 0%,76% 22%,70% 0%,64% 22%,58% 0%,52% 22%,46% 0%,40% 22%,34% 0%,28% 22%,22% 0%,16% 22%,10% 0%,4% 22%,0% 0%); }
+  .reveal { opacity: 0; transform: translateY(28px); transition: all 0.75s cubic-bezier(0.16,1,0.3,1); }
+  .reveal.active { opacity: 1; transform: translateY(0); }
+  .sizzle-badge { animation: sizzle 2.6s ease-in-out infinite; }
+  @keyframes sizzle { 0%,100%{ transform: rotate(-6deg) scale(1);} 50%{ transform: rotate(4deg) scale(1.05);} }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity:1; transform:none; transition:none; }
+    .sizzle-badge { animation: none; }
+  }
+  #modal-bg { opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  #modal-bg.open { opacity: 1; pointer-events: all; }
+  #modal-content { transform: scale(0.95) translateY(20px); transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); }
+  #modal-bg.open #modal-content { transform: scale(1) translateY(0); }
+  #home-products::-webkit-scrollbar{display:none;}
+  .tag-pill { display:inline-flex; align-items:center; gap:4px; padding:5px 12px; border-radius:999px; font-size:10.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; }
+  a:focus-visible, button:focus-visible { outline: 3px solid #ffb648; outline-offset: 2px; }
+</style>
+</head>
+<body class="bg-cream font-body text-char overflow-x-hidden">
+
+<!-- TOP NAV -->
+<nav class="fixed top-0 w-full z-50" style="background:rgba(26,18,16,0.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(242,129,26,0.18);">
+  <div class="flex justify-between items-center px-6 md:px-16 py-3.5 max-w-[1280px] mx-auto">
+    <div class="flex items-center gap-2.5 cursor-pointer" onclick="showPage('home')">
+      <img alt="OvenX Pakistan" class="h-11 w-auto object-contain" src="https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/WhatsApp_Image_2024-03-31_at_9.52.10_PM-removebg-preview_1_vywmcu.png">
+    </div>
+    <div class="hidden md:flex gap-9 items-center">
+      <a class="text-[13px] font-bold tracking-wide text-cream/85 hover:text-flame transition-colors cursor-pointer uppercase" onclick="showPage('home')">Home</a>
+      <a class="text-[13px] font-bold tracking-wide text-cream/85 hover:text-flame transition-colors cursor-pointer uppercase" onclick="showPage('menu')">Menu</a>
+      <a class="text-[13px] font-bold tracking-wide text-cream/85 hover:text-flame transition-colors cursor-pointer uppercase" onclick="showPage('story')">Our Story</a>
+      <a class="text-[13px] font-bold tracking-wide text-cream/85 hover:text-flame transition-colors cursor-pointer uppercase" onclick="showPage('locations')">Locations</a>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="https://theovenx.com" target="_blank" rel="noopener" class="hidden sm:flex items-center gap-2 bg-flame text-white px-5 py-2.5 rounded-full text-sm font-bold tracking-wide hover:bg-flame-light transition-colors shadow-md">
+        <span class="material-symbols-outlined text-lg" style="font-variation-settings:'FILL' 1;">local_fire_department</span>
+        Order Now
+      </a>
+      <button class="md:hidden p-2 text-cream" onclick="toggleMobileMenu()">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+  </div>
+  <div id="mobile-menu" class="hidden md:hidden px-6 py-4 space-y-1" style="background:#1a1210;border-top:1px solid rgba(242,129,26,0.18);">
+    <a class="block text-sm font-bold tracking-wide uppercase text-cream/85 hover:text-flame py-2.5 cursor-pointer" onclick="showPage('home');toggleMobileMenu()">Home</a>
+    <a class="block text-sm font-bold tracking-wide uppercase text-cream/85 hover:text-flame py-2.5 cursor-pointer" onclick="showPage('menu');toggleMobileMenu()">Menu</a>
+    <a class="block text-sm font-bold tracking-wide uppercase text-cream/85 hover:text-flame py-2.5 cursor-pointer" onclick="showPage('story');toggleMobileMenu()">Our Story</a>
+    <a class="block text-sm font-bold tracking-wide uppercase text-cream/85 hover:text-flame py-2.5 cursor-pointer" onclick="showPage('locations');toggleMobileMenu()">Locations</a>
+    <a href="https://theovenx.com" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 bg-flame text-white px-5 py-3 rounded-full text-sm font-bold tracking-wide mt-3">
+      <span class="material-symbols-outlined text-lg" style="font-variation-settings:'FILL' 1;">local_fire_department</span> Order Now
+    </a>
+  </div>
+</nav>
+
+<!-- ITEM MODAL -->
+<div id="modal-bg" class="fixed inset-0 bg-black/60 z-[80] flex items-center justify-center p-4" onclick="closeModal(event)">
+  <div id="modal-content" class="bg-cream rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+    <div class="relative">
+      <img id="modal-img" class="w-full h-72 object-cover rounded-t-2xl" src="" alt="">
+      <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/50 backdrop-blur-sm p-2 rounded-full hover:bg-black/70 transition-colors">
+        <span class="material-symbols-outlined text-white text-xl">close</span>
+      </button>
+      <span id="modal-tag" class="tag-pill bg-flame text-white absolute bottom-4 left-4 shadow-md"></span>
+    </div>
+    <div class="p-7 space-y-5">
+      <h2 id="modal-name" class="font-display text-3xl text-ember leading-tight"></h2>
+      <p id="modal-desc" class="text-char-soft leading-relaxed text-[15px]"></p>
+      <div id="modal-benefits" class="flex flex-wrap gap-2"></div>
+      <a href="https://theovenx.com" target="_blank" rel="noopener" class="w-full bg-ember text-white py-4 rounded-xl font-bold text-sm tracking-wide hover:bg-ember-dark transition-colors shadow-md flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">local_fire_department</span>
+        Order on theovenx.com
+      </a>
+      <p class="text-center text-xs text-char-soft">You'll be taken to our official ordering site to complete your order.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: HOME -->
+<div id="page-home" class="page active-page">
+  <!-- HERO -->
+  <section class="relative min-h-screen flex items-center pt-16 overflow-hidden bg-ink">
+    <div class="absolute inset-0">
+      <img src="https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/Gemini_Generated_Image_pym52qpym52qpym5_jijvqm.png" class="w-full h-full object-cover opacity-45" alt="OvenX cheese pizza">
+      <div class="absolute inset-0" style="background:linear-gradient(90deg, rgba(26,18,16,0.97) 15%, rgba(26,18,16,0.55) 60%, rgba(26,18,16,0.25) 100%);"></div>
+    </div>
+    <div class="px-6 md:px-16 max-w-[1280px] mx-auto w-full relative z-10 py-28">
+      <div class="max-w-xl space-y-7">
+        <div class="inline-flex items-center gap-2 bg-flame/15 border border-flame/40 rounded-full px-4 py-1.5">
+          <span class="w-2 h-2 rounded-full bg-flame animate-pulse"></span>
+          <span class="text-flame text-xs font-bold tracking-[0.15em] uppercase">Multan &amp; Bahawalpur · Made Fresh Daily</span>
+        </div>
+        <h1 class="font-display text-6xl md:text-8xl text-cream leading-[0.9]">
+          FAST FOOD<br><span class="text-flame">MEETS FLAVOUR.</span>
+        </h1>
+        <p class="text-lg text-cream/75 max-w-md leading-relaxed">
+          Flame-grilled, loaded generous, and baked to order. From cheese-pull pizzas to sharing platters — OvenX is Multan's sizzling favourite.
+        </p>
+        <div class="flex flex-wrap gap-4 pt-2">
+          <a href="https://theovenx.com" target="_blank" rel="noopener" class="group bg-flame text-white px-8 py-4 rounded-xl font-bold text-sm tracking-wide flex items-center gap-2 hover:bg-flame-light transition-all shadow-lg">
+            Order Now
+            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+          </a>
+          <button onclick="showPage('menu')" class="px-8 py-4 rounded-xl font-bold text-sm tracking-wide text-cream border-2 border-cream/25 hover:border-flame hover:text-flame transition-all">
+            View Full Menu
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="sizzle-badge hidden lg:flex absolute bottom-16 right-16 z-10 w-28 h-28 rounded-full bg-ember border-4 border-gold items-center justify-center text-center shadow-xl">
+      <span class="text-cream font-display text-sm leading-tight">100%<br>FLAME<br>GRILLED</span>
+    </div>
+  </section>
+  <div class="h-10 md:h-14 bg-ink flame-edge-down"></div>
+
+  <!-- WHY OVENX -->
+  <section class="py-20 md:py-24 bg-cream">
+    <div class="px-6 md:px-16 max-w-[1280px] mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+        <div class="space-y-7">
+          <span class="text-xs font-bold tracking-[0.2em] text-flame uppercase">The OvenX Standard</span>
+          <h2 class="font-display text-4xl md:text-5xl text-ember leading-tight">BUILT ON THE<br>OPEN FLAME</h2>
+          <p class="text-char-soft leading-relaxed text-[15px] max-w-md">Every pizza, wing, and platter that leaves our kitchen is made to order — no shortcuts, no sitting under a heat lamp. Just fresh dough, real fire, and toppings piled on generously.</p>
+          <div class="grid grid-cols-2 gap-5 pt-2">
+            <div class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-flame text-2xl mt-0.5" style="font-variation-settings:'FILL' 1;">local_fire_department</span>
+              <div><p class="font-bold text-char text-sm">Flame-Grilled</p><p class="text-xs text-char-soft mt-1">Real fire, real char, every time.</p></div>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-flame text-2xl mt-0.5" style="font-variation-settings:'FILL' 1;">nutrition</span>
+              <div><p class="font-bold text-char text-sm">Fresh Daily</p><p class="text-xs text-char-soft mt-1">Dough and toppings prepped each morning.</p></div>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-flame text-2xl mt-0.5" style="font-variation-settings:'FILL' 1;">stacks</span>
+              <div><p class="font-bold text-char text-sm">Loaded Generously</p><p class="text-xs text-char-soft mt-1">Portions built for sharing — or not.</p></div>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-flame text-2xl mt-0.5" style="font-variation-settings:'FILL' 1;">favorite</span>
+              <div><p class="font-bold text-char text-sm">City Favourite</p><p class="text-xs text-char-soft mt-1">Multan's go-to since day one.</p></div>
+            </div>
+          </div>
+        </div>
+        <div class="relative h-[420px] rounded-2xl overflow-hidden shadow-2xl">
+          <img src="https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/pomelli_photoshoot_image_9_16_0703_wdz2v9.png" class="w-full h-full object-cover" alt="Chicken fajita pizza">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED MENU CAROUSEL -->
+  <section class="py-20 md:py-24 bg-ink-soft relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[0.06] pointer-events-none" style="background-image:radial-gradient(circle at 2px 2px,#f2811a 1px,transparent 0);background-size:34px 34px;"></div>
+    <div class="px-6 md:px-16 max-w-[1280px] mx-auto relative z-10">
+      <div class="flex justify-between items-end mb-12">
+        <div>
+          <span class="text-xs font-bold tracking-[0.2em] text-flame uppercase">Crowd Favourites</span>
+          <h2 class="font-display text-4xl md:text-5xl text-cream mt-2">STRAIGHT FROM<br class="hidden sm:block"> THE OVEN</h2>
+        </div>
+        <button onclick="showPage('menu')" class="hidden sm:flex font-bold text-sm text-flame items-center gap-2 hover:text-flame-light transition-colors group">
+          Full Menu <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+        </button>
+      </div>
+      <div class="relative">
+        <button id="scroll-left" onclick="scrollCarousel(-1)" class="hidden md:flex absolute -left-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 bg-cream rounded-full shadow-lg items-center justify-center hover:bg-flame hover:text-cream transition-colors">
+          <span class="material-symbols-outlined text-ember text-xl">chevron_left</span>
+        </button>
+        <button id="scroll-right" onclick="scrollCarousel(1)" class="hidden md:flex absolute -right-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 bg-cream rounded-full shadow-lg items-center justify-center hover:bg-flame hover:text-cream transition-colors">
+          <span class="material-symbols-outlined text-ember text-xl">chevron_right</span>
+        </button>
+        <div id="home-products" class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth" style="scrollbar-width:none;-ms-overflow-style:none;"></div>
+        <div id="carousel-dots" class="flex justify-center gap-2 mt-8"></div>
+      </div>
+    </div>
+  </section>
+  <div class="h-10 md:h-14 bg-ink-soft flame-edge-down"></div>
+
+  <!-- STORY TEASER -->
+  <section class="py-20 md:py-24 bg-cream">
+    <div class="px-6 md:px-16 max-w-[1280px] mx-auto">
+      <div class="rounded-2xl overflow-hidden shadow-xl grid grid-cols-1 lg:grid-cols-2 items-stretch" style="background:#fbf2e4;border:1px solid #e7d9c6;">
+        <div class="p-10 lg:p-14 space-y-5 flex flex-col justify-center">
+          <span class="text-xs font-bold tracking-[0.2em] text-flame uppercase">Our Story</span>
+          <h3 class="font-display text-3xl md:text-4xl text-ember leading-tight">FROM ONE KITCHEN<br>IN GULGASHT</h3>
+          <p class="text-char-soft leading-relaxed text-[15px]">What started as a single café in Gulgasht Colony, Multan has grown into a name Bahawalpur knows too — built one flame-grilled order at a time.</p>
+          <button onclick="showPage('story')" class="self-start bg-ember text-white px-7 py-3.5 rounded-xl font-bold text-sm hover:bg-ember-dark transition-colors shadow-md flex items-center gap-2">
+            Read Our Story
+            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+          </button>
+        </div>
+        <div class="h-64 lg:h-auto">
+          <img src="https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/Gemini_Generated_Image_73zdm373zdm373zd_vyynyi.png" class="w-full h-full object-cover" alt="OvenX kitchen">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="relative py-24 bg-ember overflow-hidden">
+    <img src="images/peri_pizza_land.jpg" class="absolute inset-0 w-full h-full object-cover opacity-25" alt="">
+    <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(122,16,19,0.9) 0%, rgba(83,11,13,0.95) 100%);"></div>
+    <div class="px-6 md:px-16 max-w-[900px] mx-auto text-center relative z-10 space-y-6">
+      <h2 class="font-display text-4xl md:text-6xl text-cream leading-tight">CRAVING SOMETHING<br>SIZZLING?</h2>
+      <p class="text-cream/80 text-lg max-w-lg mx-auto">Order directly through theovenx.com for the fastest delivery and exclusive online discounts.</p>
+      <a href="https://theovenx.com" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-flame text-white px-10 py-4 rounded-xl font-bold text-sm tracking-wide hover:bg-flame-light transition-all shadow-lg mt-2">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">local_fire_department</span>
+        Order on theovenx.com
+      </a>
+    </div>
+  </section>
+</div>
+
+<!-- PAGE: MENU -->
+<div id="page-menu" class="page pt-16">
+  <div class="bg-ink py-16 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[0.07] pointer-events-none" style="background-image:radial-gradient(circle at 2px 2px,#f2811a 1px,transparent 0);background-size:34px 34px;"></div>
+    <div class="px-6 md:px-16 max-w-[1280px] mx-auto relative z-10">
+      <span class="text-xs font-bold tracking-[0.2em] text-flame uppercase">Handcrafted &amp; Made to Order</span>
+      <h1 class="font-display text-5xl md:text-6xl text-cream mt-3">THE FULL MENU</h1>
+      <p class="text-cream/70 mt-3 max-w-lg">Every item below is available for delivery, pickup, or dine-in — place your order on theovenx.com.</p>
+    </div>
+  </div>
+  <div class="px-6 md:px-16 max-w-[1280px] mx-auto py-14">
+    <div class="flex gap-3 mb-10 flex-wrap">
+  <button onclick="filterProducts('all',this)" class="filter-btn px-5 py-2.5 rounded-full text-sm font-bold bg-ember text-white transition-all">All</button>
+  <button onclick="filterProducts('pizza',this)" class="filter-btn px-5 py-2.5 rounded-full text-sm font-bold bg-cream-dim text-char border border-line hover:bg-line transition-all">Pizzas</button>
+  <button onclick="filterProducts('wings-fries',this)" class="filter-btn px-5 py-2.5 rounded-full text-sm font-bold bg-cream-dim text-char border border-line hover:bg-line transition-all">Wings &amp; Fries</button>
+  <button onclick="filterProducts('pasta-baked',this)" class="filter-btn px-5 py-2.5 rounded-full text-sm font-bold bg-cream-dim text-char border border-line hover:bg-line transition-all">Pasta &amp; Baked</button>
+  <button onclick="filterProducts('rolls-platters',this)" class="filter-btn px-5 py-2.5 rounded-full text-sm font-bold bg-cream-dim text-char border border-line hover:bg-line transition-all">Rolls &amp; Platters</button>
+</div>
+    <div id="shop-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+  </div>
+  <section class="relative py-20 bg-ember overflow-hidden mt-6">
+    <div class="px-6 md:px-16 max-w-[900px] mx-auto text-center relative z-10 space-y-5">
+      <h2 class="font-display text-3xl md:text-4xl text-cream">READY TO ORDER?</h2>
+      <a href="https://theovenx.com" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-flame text-white px-9 py-4 rounded-xl font-bold text-sm tracking-wide hover:bg-flame-light transition-all shadow-lg">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">local_fire_department</span>
+        Order on theovenx.com
+      </a>
+    </div>
+  </section>
+</div>
+
+<!-- PAGE: STORY -->
+<div id="page-story" class="page pt-16">
+  <div class="relative py-28 md:py-36 overflow-hidden bg-ink">
+    <img src="images/peri_pizza_land.jpg" class="absolute inset-0 w-full h-full object-cover opacity-30" alt="">
+    <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(26,18,16,0.85) 0%, rgba(26,18,16,0.97) 100%);"></div>
+    <div class="px-6 md:px-16 max-w-[1000px] mx-auto relative z-10 text-center">
+      <span class="text-xs font-bold tracking-[0.2em] text-flame uppercase">Our Story</span>
+      <h1 class="font-display text-5xl md:text-7xl text-cream mt-4 leading-[0.95]">MADE IN MULTAN.<br><span class="text-flame">LOVED EVERYWHERE.</span></h1>
+    </div>
+  </div>
+  <div class="h-10 md:h-14 bg-ink flame-edge-down"></div>
+
+  <div class="px-6 md:px-16 max-w-[1280px] mx-auto py-20 space-y-24 bg-cream">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+      <div class="space-y-5">
+        <span class="text-xs font-bold tracking-[0.2em] text-flame uppercase">Where It Started</span>
+        <h2 class="font-display text-3xl md:text-4xl text-ember leading-tight">ONE STREET IN GULGASHT COLONY</h2>
+        <p class="text-char-soft leading-relaxed text-[15px]">OvenX opened its doors on 34-A Gulgasht Colony, Multan, with a simple idea: fast food doesn't have to mean cutting corners. Every pizza is hand-stretched, every burger is grilled to order, and every fry basket comes out loaded.</p>
+        <p class="text-char-soft leading-relaxed text-[15px]">Word spread quickly — from students grabbing a quick zinger burger to families ordering the sharing platter on a Friday night.</p>
+      </div>
+      <div class="h-80 rounded-2xl overflow-hidden shadow-xl">
+        <img src="https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/497771114_1882160222561000_2719388136809864805_n_c41kwc.jpg" class="w-full h-full object-cover" alt="OvenX signature pizza">
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+      <div class="h-80 rounded-2xl overflow-hidden shadow-xl order-2 lg:order-1">
+        <img src="https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/489789448_1231050429025400_6507141495679635912_n_x6ijgo.jpg" class="w-full h-full object-cover" alt="OvenX Bahawalpur">
+      </div>
+      <div class="space-y-5 order-1 lg:order-2">
+        <span class="text-xs font-bold tracking-[0.2em] text-flame uppercase">Growing the Flame</span>
+        <h2 class="font-display text-3xl md:text-4xl text-ember leading-tight">NOW SERVING BAHAWALPUR TOO</h2>
+        <p class="text-char-soft leading-relaxed text-[15px]">The same fire that built our first kitchen now powers our Bahawalpur branch on Noor Mahal Road — same recipes, same generous portions, same commitment to made-to-order food.</p>
+        <p class="text-char-soft leading-relaxed text-[15px]">Wherever the next OvenX opens, one thing won't change: everything is cooked fresh, the moment you order it.</p>
+      </div>
+    </div>
+
+    <div class="rounded-2xl p-10 md:p-14 bg-ink-soft relative overflow-hidden">
+      <div class="absolute inset-0 opacity-[0.06] pointer-events-none" style="background-image:radial-gradient(circle at 2px 2px,#f2811a 1px,transparent 0);background-size:34px 34px;"></div>
+      <h2 class="font-display text-3xl md:text-4xl text-cream text-center mb-12 relative z-10">WHAT WE STAND FOR</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
+        <div class="text-center space-y-4">
+          <div class="w-16 h-16 bg-flame/15 rounded-full flex items-center justify-center mx-auto border border-flame/30">
+            <span class="material-symbols-outlined text-flame text-3xl" style="font-variation-settings:'FILL' 1;">local_fire_department</span>
+          </div>
+          <h3 class="font-bold text-cream text-base">Flame-Grilled Flavour</h3>
+          <p class="text-cream/60 text-sm leading-relaxed">Real fire brings out a char and depth no shortcut can match.</p>
+        </div>
+        <div class="text-center space-y-4">
+          <div class="w-16 h-16 bg-flame/15 rounded-full flex items-center justify-center mx-auto border border-flame/30">
+            <span class="material-symbols-outlined text-flame text-3xl" style="font-variation-settings:'FILL' 1;">nutrition</span>
+          </div>
+          <h3 class="font-bold text-cream text-base">Fresh, Not Frozen</h3>
+          <p class="text-cream/60 text-sm leading-relaxed">Dough, sauces, and toppings prepped fresh every single day.</p>
+        </div>
+        <div class="text-center space-y-4">
+          <div class="w-16 h-16 bg-flame/15 rounded-full flex items-center justify-center mx-auto border border-flame/30">
+            <span class="material-symbols-outlined text-flame text-3xl" style="font-variation-settings:'FILL' 1;">stacks</span>
+          </div>
+          <h3 class="font-bold text-cream text-base">Loaded Generously</h3>
+          <p class="text-cream/60 text-sm leading-relaxed">No skimping — every order is built to satisfy.</p>
+        </div>
+        <div class="text-center space-y-4">
+          <div class="w-16 h-16 bg-flame/15 rounded-full flex items-center justify-center mx-auto border border-flame/30">
+            <span class="material-symbols-outlined text-flame text-3xl" style="font-variation-settings:'FILL' 1;">groups</span>
+          </div>
+          <h3 class="font-bold text-cream text-base">A Community Table</h3>
+          <p class="text-cream/60 text-sm leading-relaxed">From late-night cravings to family dinners — built for everyone.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center">
+      <button onclick="showPage('menu')" class="bg-ember text-white px-10 py-4 rounded-xl font-bold text-sm tracking-wide hover:bg-ember-dark transition-all shadow-lg">Explore the Menu →</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: LOCATIONS -->
+<div id="page-locations" class="page pt-16">
+  <div class="relative py-24 md:py-28 overflow-hidden bg-ink">
+    <img src="images/cheese_pizza_land.jpg" class="absolute inset-0 w-full h-full object-cover opacity-25" alt="">
+    <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(26,18,16,0.88) 0%, rgba(26,18,16,0.97) 100%);"></div>
+    <div class="px-6 md:px-16 max-w-[1000px] mx-auto relative z-10 text-center">
+      <span class="text-xs font-bold tracking-[0.2em] text-flame uppercase">Find Us</span>
+      <h1 class="font-display text-5xl md:text-6xl text-cream mt-4">OUR LOCATIONS</h1>
+      <p class="text-cream/70 mt-4 max-w-xl mx-auto">Two kitchens, one standard. Order online or reach out directly.</p>
+    </div>
+  </div>
+
+  <div class="px-6 md:px-16 max-w-[1280px] mx-auto py-20">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="rounded-2xl overflow-hidden border border-line shadow-sm">
+        <div class="h-52"><img src="https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/497771114_1882160222561000_2719388136809864805_n_c41kwc.jpg" class="w-full h-full object-cover" alt="OvenX Multan"></div>
+        <div class="p-8 space-y-4">
+          <span class="tag-pill bg-flame/10 text-flame">Flagship Branch</span>
+          <h3 class="font-display text-2xl text-ember">MULTAN — GULGASHT COLONY</h3>
+          <div class="flex items-start gap-3 text-char-soft text-sm"><span class="material-symbols-outlined text-flame text-lg mt-0.5">location_on</span><span>34-A Gulgasht Colony, Multan, Punjab</span></div>
+          <div class="flex items-start gap-3 text-char-soft text-sm"><span class="material-symbols-outlined text-flame text-lg mt-0.5">call</span><span> Branch 0300-1450301 · Customer-Care 0300-2450301</span></div>
+          <div class="flex items-start gap-3 text-char-soft text-sm"><span class="material-symbols-outlined text-flame text-lg mt-0.5">mail</span><span>ovenxpakistan@gmail.com</span></div>
+          <div class="flex flex-wrap gap-3 pt-2">
+            <a href="https://theovenx.com" target="_blank" rel="noopener" class="bg-ember text-white px-5 py-3 rounded-xl font-bold text-xs tracking-wide hover:bg-ember-dark transition-colors flex items-center gap-2">
+              <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1;">local_fire_department</span> Order Now
+            </a>
+            <a href="tel:+923001450301" class="border border-line text-char px-5 py-3 rounded-xl font-bold text-xs tracking-wide hover:border-flame hover:text-flame transition-colors flex items-center gap-2">
+              <span class="material-symbols-outlined text-base">call</span> Call Branch
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl overflow-hidden border border-line shadow-sm">
+        <div class="h-52"><img src="https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/489789448_1231050429025400_6507141495679635912_n_x6ijgo.jpg" class="w-full h-full object-cover" alt="OvenX Bahawalpur"></div>
+        <div class="p-8 space-y-4">
+          <span class="tag-pill bg-flame/10 text-flame">Now Open</span>
+          <h3 class="font-display text-2xl text-ember">BAHAWALPUR — SS TOWER</h3>
+          <div class="flex items-start gap-3 text-char-soft text-sm"><span class="material-symbols-outlined text-flame text-lg mt-0.5">location_on</span><span>SS Tower, Noor Mahal Rd, Sadiq Colony, Bahawalpur</span></div>
+          <div class="flex items-start gap-3 text-char-soft text-sm"><span class="material-symbols-outlined text-flame text-lg mt-0.5">call</span><span>Branch 0300-3450301 · Customer-Care 0300-2450301</span></div>
+          <div class="flex items-start gap-3 text-char-soft text-sm"><span class="material-symbols-outlined text-flame text-lg mt-0.5">mail</span><span>ovenxpakistan@gmail.com</span></div>
+          <div class="flex flex-wrap gap-3 pt-2">
+            <a href="https://theovenx.com" target="_blank" rel="noopener" class="bg-ember text-white px-5 py-3 rounded-xl font-bold text-xs tracking-wide hover:bg-ember-dark transition-colors flex items-center gap-2">
+              <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1;">local_fire_department</span> Order Now
+            </a>
+            <a href="tel:+923003450301" class="border border-line text-char px-5 py-3 rounded-xl font-bold text-xs tracking-wide hover:border-flame hover:text-flame transition-colors flex items-center gap-2">
+              <span class="material-symbols-outlined text-base">call</span> Call Branch
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-14 rounded-2xl bg-cream-dim border border-line p-8 md:p-10 flex flex-col md:flex-row items-center gap-6 justify-between">
+      <div class="flex items-center gap-4">
+        <span class="material-symbols-outlined text-flame text-4xl" style="font-variation-settings:'FILL' 1;">forum</span>
+        <div>
+          <p class="font-bold text-char">Follow along on Instagram</p>
+          <p class="text-char-soft text-sm">@ovenxpakistan for daily specials and new menu drops.</p>
+        </div>
+      </div>
+      <a href="https://www.instagram.com/ovenxpakistan/" target="_blank" rel="noopener" class="bg-char text-white px-6 py-3 rounded-xl font-bold text-xs tracking-wide hover:bg-ember transition-colors whitespace-nowrap">Visit Instagram</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="bg-ink">
+  <div class="px-6 md:px-16 max-w-[1280px] mx-auto py-14">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+      <div class="space-y-4">
+        <img alt="OvenX" class="h-11 w-auto" src="https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/WhatsApp_Image_2024-03-31_at_9.52.10_PM-removebg-preview_1_vywmcu.png">
+        <p class="text-sm text-cream/60 max-w-xs leading-relaxed">Flame-grilled fast food, made fresh to order. Serving Multan and Bahawalpur.</p>
+        <div class="flex gap-3 pt-1">
+          <a href="https://www.instagram.com/ovenxpakistan/" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-flame transition-colors">
+            <span class="material-symbols-outlined text-cream text-lg">photo_camera</span>
+          </a>
+          <a href="tel:+923001450301" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-flame transition-colors">
+            <span class="material-symbols-outlined text-cream text-lg">call</span>
+          </a>
+          <a href="mailto:ovenxpakistan@gmail.com" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-flame transition-colors">
+            <span class="material-symbols-outlined text-cream text-lg">mail</span>
+          </a>
+        </div>
+      </div>
+      <div>
+        <h4 class="text-xs font-bold tracking-[0.2em] text-flame uppercase mb-4">Navigate</h4>
+        <div class="space-y-3">
+          <div class="text-sm text-cream/60 hover:text-cream transition-colors cursor-pointer" onclick="showPage('menu')">Menu</div>
+          <div class="text-sm text-cream/60 hover:text-cream transition-colors cursor-pointer" onclick="showPage('story')">Our Story</div>
+          <div class="text-sm text-cream/60 hover:text-cream transition-colors cursor-pointer" onclick="showPage('locations')">Locations</div>
+        </div>
+      </div>
+      <div>
+        <h4 class="text-xs font-bold tracking-[0.2em] text-flame uppercase mb-4">Order Online</h4>
+        <a href="https://theovenx.com" target="_blank" rel="noopener" class="inline-flex items-center gap-3 bg-flame rounded-xl px-5 py-3.5 hover:bg-flame-light transition-colors shadow-md">
+          <span class="material-symbols-outlined text-white" style="font-variation-settings:'FILL' 1;">local_fire_department</span>
+          <div>
+            <div class="text-white/70 text-[9px] tracking-widest uppercase font-bold">Official Site</div>
+            <div class="text-white font-bold text-sm">theovenx.com</div>
+          </div>
+        </a>
+        <p class="text-xs text-cream/40 mt-4">© 2026 OvenX Pakistan. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ============================================================ DATA
+const PRODUCTS = [
+  { id: 1, name: "Cheese Crust", tag: "Classic", category: "Cheesy",
+    desc: "Experience the perfect cheese-stuffed crust Pizza — a crispy thick crust packed with melty cheese, topped with customized sauces and fresh toppings. Light, crispy, and full of flavor!",
+    benefits: ["Bestseller", "Extra Cheesy", "Baked Fresh"], img: "https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/Gemini_Generated_Image_pym52qpym52qpym5_jijvqm.png" },
+  { id: 2, name: "Crispy", tag: "Crispy", category: "Extreme",
+    desc: "Our Crispy Extreme Pizza — an extra crispy crust loaded with bold extreme toppings and spicy sauce. Available in Medium and Large.",
+    benefits: ["Fan Favourite", "Crispy Chicken", "Tangy"], img: "https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/cris_txgczh.png" },
+  { id: 3, name: "Peri Peri", tag: "Fan Favourite", category: "Extreme",
+    desc: "Our Extreme Peri Peri Pizza — fiery peri peri sauce with spiced chicken on a crispy crust. Not for the faint-hearted! Available in Medium and Large.",
+    benefits: ["Spicy", "Peri Peri", "Grilled Chicken"], img: "https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/Gemini_Generated_Image_73zdm373zdm373zd_vyynyi.png" },
+  { id: 4, name: "Chicken Fajita", tag: "Pan Pizza", category: "Basic",
+    desc: "Our Chicken Fajita Pizza — loaded with seasoned fajita chicken, mixed peppers, and creamy sauce on a golden crust. Available in Small, Medium and Large.",
+    benefits: ["Signature", "Bell Peppers", "Smoky Sauce"], img: "https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/pomelli_photoshoot_image_9_16_0703_wdz2v9.png" },
+  { id: 5, name: "OvenX Special", tag: "Heavily Loaded", category: "Deep Dish",
+    desc: "Our OvenX Special Deep Dish — a generous deep dish pizza packed with our signature premium toppings. Available in Medium and Large.",
+    benefits: ["Garlic Butter", "Herb Finish", "Extra Cheesy"], img: "https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/dd_fbhnla.png" },
+  { id: 6, name: "Mild Butter", tag: "Buttery", category: "Deep Dish",
+    desc: "Our Mild Butter Deep Dish Pizza — a thick, buttery deep dish crust loaded with toppings and rich sauce. Available in Medium and Large.",
+    benefits: ["Smoky BBQ", "Grilled Chicken", "Creamy Drizzle"], img: "https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/ddd_ejxjei.png" },
+  { id: 7, name: "Flaming Kabab", tag: "Kababish", category: "Extreme",
+    desc: "Our Extreme Flaming Kabab Pizza — bold kabab flavors with a fiery kick on a golden crust. Available in Medium and Large.",
+    benefits: ["Cheese-Stuffed Crust", "Peri Spice", "Loaded"], img: "https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/flam_tmbg0t.png" },
+  { id: 8, name: "Bonfire", tag: "Desi Twist", category: "Premium Pizza",
+    desc: "Our Bonfire Pizza — bold, smoky flavors inspired by open-fire cooking, topped with premium ingredients. Available in Medium and Large.",
+    benefits: ["Tikka Spice", "Desi Twist", "Char-Grilled"], img: "https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/Gemini_Generated_Image_4lngzx4lngzx4lng_fge7mo.png" },
+  { id: 9, name: "Oven Baked Wings", tag: "Wings", category: "Steamed",
+    desc: "Our Oven Baked Wings — tender, juicy chicken wings baked to golden perfection with our signature seasoning. Crispy outside, succulent inside!",
+    benefits: ["Flame-Grilled", "Juicy", "Smoky"], img: "https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/baked_hcoeat.png" },
+  { id: 10, name: "OvenX Loaded Fries", tag: "Loaded", category: "Fries",
+    desc: "Our Loaded Fries — a generous portion of crispy fries smothered in creamy sauces, fresh toppings, and melted cheese. A indulgent treat in every bite!",
+    benefits: ["Crispy Chicken", "Double Sauce", "Shareable"], img: "https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/load_otc9e5.png" },
+  { id: 11, name: "Alfredo", tag: "Pasta", category: "Mild",
+    desc: "Indulge in our Alfredo Pasta — tender pasta strips coated in creamy white sauce, topped with grilled chicken steak fillets and garnished with black olives for a rich, flavorful bite. Pure creamy perfection!",
+    benefits: ["Creamy Alfredo", "Grilled Chicken", "Comfort Food"], img: "https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/x_sp_vnnwpc.png" },
+  { id: 12, name: "Behari Platter", tag: "Platter", category: "Wraps",
+    desc: "Our signature Behari Platter — tender, juicy behari chicken served with fresh accompaniments. A rich, aromatic feast bursting with bold flavors!",
+    benefits: ["Baked", "Cheesy", "Spicy Kick"], img: "https://res.cloudinary.com/xol0kklw/image/upload/f_auto/q_auto/behari_pla_xr6qw2.png" },
+  
+];
+
+const ORDER_URL = "https://theovenx.com";
+
+// ============================================================ PAGE ROUTING
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+  document.getElementById('page-' + id).classList.add('active-page');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleMobileMenu() {
+  document.getElementById('mobile-menu').classList.toggle('hidden');
+}
+
+// ============================================================ PRODUCTS
+function renderProductCard(p, container, isCarousel = false) {
+  const div = document.createElement('div');
+  if (isCarousel) {
+    div.className = 'group cursor-pointer flex-none snap-start';
+    div.style.cssText = 'width:260px;';
+  } else {
+    div.className = 'group cursor-pointer';
+  }
+  div.innerHTML = `
+    <div class="rounded-xl overflow-hidden mb-4 relative shadow-sm hover:shadow-xl transition-shadow" style="aspect-ratio:4/5;">
+      <img alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="${p.img}">
+      <div class="absolute top-3 left-3">
+        <span class="tag-pill bg-ink/85 text-flame">${p.tag}</span>
+      </div>
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      <div class="absolute bottom-4 left-4 right-4 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+        <div class="w-full bg-flame text-white py-3 rounded-xl text-sm font-bold text-center shadow-lg">View Details</div>
+      </div>
+    </div>
+    <h4 class="font-display text-lg text-ember tracking-wide">${p.name.toUpperCase()}</h4>
+    <p class="text-char-soft text-sm mt-1">${p.desc.substring(0, 78)}...</p>
+  `;
+  div.addEventListener('click', () => openModal(p));
+  container.appendChild(div);
+}
+
+function initShopGrid() {
+  const grid = document.getElementById('shop-grid');
+  grid.innerHTML = '';
+  PRODUCTS.forEach(p => renderProductCard(p, grid));
+}
+
+function initHomeProducts() {
+  const container = document.getElementById('home-products');
+  container.innerHTML = '';
+  PRODUCTS.forEach(p => renderProductCard(p, container, true));
+  buildCarouselDots();
+  updateScrollButtons();
+  container.addEventListener('scroll', () => { buildCarouselDots(); updateScrollButtons(); });
+}
+
+function buildCarouselDots() {
+  const c = document.getElementById('home-products');
+  const dots = document.getElementById('carousel-dots');
+  if (!c || !dots) return;
+  const cardW = 260 + 24;
+  const total = PRODUCTS.length;
+  const visible = Math.round(c.offsetWidth / cardW);
+  const pages = Math.max(1, total - visible + 1);
+  const current = Math.round(c.scrollLeft / cardW);
+  dots.innerHTML = '';
+  for (let i = 0; i < pages; i++) {
+    const d = document.createElement('div');
+    d.className = 'rounded-full transition-all duration-300 cursor-pointer';
+    d.style.cssText = i === current
+      ? 'width:24px;height:8px;background:#f2811a;'
+      : 'width:8px;height:8px;background:#5c4d44;opacity:0.4;';
+    d.onclick = () => { c.scrollTo({ left: i * cardW, behavior: 'smooth' }); };
+    dots.appendChild(d);
+  }
+}
+
+function scrollCarousel(dir) {
+  const c = document.getElementById('home-products');
+  if (c) c.scrollBy({ left: dir * 280, behavior: 'smooth' });
+}
+
+function updateScrollButtons() {
+  const c = document.getElementById('home-products');
+  const lBtn = document.getElementById('scroll-left');
+  const rBtn = document.getElementById('scroll-right');
+  if (!c || !lBtn || !rBtn) return;
+  lBtn.style.opacity = c.scrollLeft < 10 ? '0.3' : '1';
+  rBtn.style.opacity = c.scrollLeft >= c.scrollWidth - c.offsetWidth - 10 ? '0.3' : '1';
+}
+
+function filterProducts(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.className = 'filter-btn px-5 py-2.5 rounded-full text-sm font-bold bg-cream-dim text-char border border-line hover:bg-line transition-all';
+  });
+  btn.className = 'filter-btn px-5 py-2.5 rounded-full text-sm font-bold bg-ember text-white transition-all';
+  const grid = document.getElementById('shop-grid');
+  grid.innerHTML = '';
+  
+  let filtered;
+  if (cat === 'all') {
+    filtered = PRODUCTS;
+  } else if (cat === 'pizza') {
+    // Pizza categories: Cheesy, Extreme, Basic, Deep Dish, Premium Pizza
+    filtered = PRODUCTS.filter(p => ['Cheesy','Extreme','Basic','Deep Dish','Premium Pizza'].includes(p.category));
+  } else if (cat === 'wings-fries') {
+    filtered = PRODUCTS.filter(p => ['Steamed','Fries'].includes(p.category));
+  } else if (cat === 'pasta-baked') {
+    filtered = PRODUCTS.filter(p => ['Mild'].includes(p.category));
+  } else if (cat === 'rolls-platters') {
+    filtered = PRODUCTS.filter(p => ['Wraps'].includes(p.category));
+  }
+  
+  filtered.forEach(p => renderProductCard(p, grid));
+}
+
+// ============================================================ MODAL
+function openModal(p) {
+  document.getElementById('modal-img').src = p.img;
+  document.getElementById('modal-tag').textContent = p.tag;
+  document.getElementById('modal-name').textContent = p.name;
+  document.getElementById('modal-desc').textContent = p.desc;
+
+  const benefitsEl = document.getElementById('modal-benefits');
+  benefitsEl.innerHTML = '';
+  (p.benefits || []).forEach(b => {
+    const pill = document.createElement('span');
+    pill.className = 'tag-pill bg-cream-dim text-char-soft border border-line';
+    pill.textContent = b;
+    benefitsEl.appendChild(pill);
+  });
+
+  document.getElementById('modal-bg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal-bg') || !e.target) {
+    document.getElementById('modal-bg').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+// ============================================================ SCROLL REVEAL
+function initReveal() {
+  const els = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); });
+  }, { threshold: 0.15 });
+  els.forEach(el => io.observe(el));
+}
+
+// ============================================================ INIT
+document.addEventListener('DOMContentLoaded', () => {
+  initShopGrid();
+  initHomeProducts();
+  initReveal();
+});
+</script>
+</body>
+</html>
